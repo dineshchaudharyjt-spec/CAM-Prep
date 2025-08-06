@@ -1,231 +1,285 @@
-# Create a comprehensive list of banking metrics with formulas and descriptions
-import pandas as pd
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Financial Analysis Tool</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>Banking Financial Analysis Tool</h1>
+            <p>Comprehensive financial statement analysis for banking institutions</p>
+            <div class="header-actions">
+                <button class="btn btn--secondary" onclick="clearAllData()">Clear All</button>
+                <button class="btn btn--primary" onclick="exportResults()">Export Results</button>
+            </div>
+        </header>
 
-# Define the banking metrics with formulas and descriptions
-banking_metrics = [
-    # Growth Metrics
-    {
-        "Category": "Growth",
-        "Metric": "AUM Growth",
-        "Formula": "((Current AUM - Previous AUM) / Previous AUM) * 100",
-        "Description": "Measures growth in Assets Under Management year-over-year",
-        "Data Required": "Current AUM, Previous period AUM"
-    },
-    {
-        "Category": "Growth", 
-        "Metric": "Loan Growth",
-        "Formula": "((Current Loans - Previous Loans) / Previous Loans) * 100",
-        "Description": "Measures growth in loan portfolio year-over-year",
-        "Data Required": "Current period loans, Previous period loans"
-    },
-    {
-        "Category": "Growth",
-        "Metric": "Deposit Growth", 
-        "Formula": "((Current Deposits - Previous Deposits) / Previous Deposits) * 100",
-        "Description": "Measures growth in deposit base year-over-year",
-        "Data Required": "Current period deposits, Previous period deposits"
-    },
-    {
-        "Category": "Growth",
-        "Metric": "Total Operating Income Growth",
-        "Formula": "((Current Operating Income - Previous Operating Income) / Previous Operating Income) * 100",
-        "Description": "Measures growth in total operating income year-over-year",
-        "Data Required": "Current operating income, Previous operating income"
-    },
-    
-    # Profitability Metrics
-    {
-        "Category": "Profitability",
-        "Metric": "Net Interest Margin (NIM)",
-        "Formula": "((Interest Income - Interest Expense) / Average Interest Earning Assets) * 100",
-        "Description": "Measures bank's profitability on interest-earning assets",
-        "Data Required": "Interest income, Interest expense, Average interest earning assets"
-    },
-    {
-        "Category": "Profitability",
-        "Metric": "Gross NIM",
-        "Formula": "(Interest Income / Average Interest Earning Assets) * 100",
-        "Description": "Measures gross interest margin before considering interest expenses",
-        "Data Required": "Interest income, Average interest earning assets"
-    },
-    {
-        "Category": "Profitability",
-        "Metric": "Gross Yields",
-        "Formula": "(Interest Income / Average Loans and Advances) * 100",
-        "Description": "Average yield earned on loans and advances",
-        "Data Required": "Interest income, Average loans and advances"
-    },
-    {
-        "Category": "Profitability",
-        "Metric": "Other Income/Avg AR",
-        "Formula": "(Non-Interest Income / Average Risk Assets) * 100",
-        "Description": "Non-interest income as percentage of average risk assets",
-        "Data Required": "Non-interest income, Average risk assets"
-    },
-    {
-        "Category": "Profitability",
-        "Metric": "Pre-Provision Profits (PPP)",
-        "Formula": "Operating Income - Operating Expenses (excluding provisions)",
-        "Description": "Profit before setting aside provisions for bad loans",
-        "Data Required": "Operating income, Operating expenses (excluding provisions)"
-    },
-    {
-        "Category": "Profitability",
-        "Metric": "PPP % of AR",
-        "Formula": "(Pre-Provision Profits / Average Risk Assets) * 100",
-        "Description": "Pre-provision profits as percentage of average risk assets",
-        "Data Required": "Pre-provision profits, Average risk assets"
-    },
-    {
-        "Category": "Profitability",
-        "Metric": "Return on Assets (ROA)",
-        "Formula": "(Net Income / Average Total Assets) * 100",
-        "Description": "Measures bank's efficiency in using assets to generate profits",
-        "Data Required": "Net income, Average total assets"
-    },
-    {
-        "Category": "Profitability",
-        "Metric": "Return on Equity (ROE)",
-        "Formula": "(Net Income / Average Shareholders Equity) * 100",
-        "Description": "Measures bank's profitability relative to shareholders' equity",
-        "Data Required": "Net income, Average shareholders equity"
-    },
-    
-    # Asset Quality Metrics
-    {
-        "Category": "Asset Quality",
-        "Metric": "Gross NPA %",
-        "Formula": "(Gross NPAs / Gross Advances) * 100",
-        "Description": "Percentage of loans that are non-performing (overdue >90 days)",
-        "Data Required": "Gross NPAs, Gross advances"
-    },
-    {
-        "Category": "Asset Quality",
-        "Metric": "Net NPA %",
-        "Formula": "(Net NPAs / Net Advances) * 100",
-        "Description": "Net non-performing assets after provisions as % of net advances",
-        "Data Required": "Net NPAs (Gross NPAs - Provisions), Net advances (Gross advances - Provisions)"
-    },
-    {
-        "Category": "Asset Quality",
-        "Metric": "Credit Cost %",
-        "Formula": "(Provisions & Write-offs / Average Risk Assets) * 100",
-        "Description": "Annual cost of provisions as percentage of average risk assets",
-        "Data Required": "Provisions and write-offs, Average risk assets"
-    },
-    {
-        "Category": "Asset Quality",
-        "Metric": "Provision Coverage Ratio",
-        "Formula": "(Provisions for NPAs / Gross NPAs) * 100",
-        "Description": "Percentage of NPAs covered by provisions",
-        "Data Required": "Provisions for NPAs, Gross NPAs"
-    },
-    
-    # Efficiency Metrics
-    {
-        "Category": "Efficiency",
-        "Metric": "Efficiency Ratio",
-        "Formula": "(Operating Expenses / (Net Interest Income + Non-Interest Income)) * 100",
-        "Description": "Measures operational efficiency - lower is better",
-        "Data Required": "Operating expenses, Net interest income, Non-interest income"
-    },
-    {
-        "Category": "Efficiency",
-        "Metric": "Cost-to-Income Ratio",
-        "Formula": "(Operating Expenses / Operating Income) * 100",
-        "Description": "Operating costs as percentage of operating income",
-        "Data Required": "Operating expenses, Operating income"
-    },
-    
-    # Capital Adequacy Metrics
-    {
-        "Category": "Capital Adequacy",
-        "Metric": "Capital Adequacy Ratio (CAR)",
-        "Formula": "((Tier 1 Capital + Tier 2 Capital) / Risk Weighted Assets) * 100",
-        "Description": "Measures bank's capital relative to risk-weighted assets",
-        "Data Required": "Tier 1 capital, Tier 2 capital, Risk weighted assets"
-    },
-    {
-        "Category": "Capital Adequacy", 
-        "Metric": "Tangible Net Worth (TNW)",
-        "Formula": "Total Assets - Total Liabilities - Intangible Assets",
-        "Description": "Net worth excluding intangible assets",
-        "Data Required": "Total assets, Total liabilities, Intangible assets"
-    },
-    {
-        "Category": "Capital Adequacy",
-        "Metric": "External Debt / TNW",
-        "Formula": "(External Debt / Tangible Net Worth) * 100",
-        "Description": "External debt as percentage of tangible net worth",
-        "Data Required": "External debt, Tangible net worth"
-    },
-    {
-        "Category": "Capital Adequacy",
-        "Metric": "Net Debt / TNW",
-        "Formula": "((Total Debt - Cash & Liquid Investments) / Tangible Net Worth) * 100",
-        "Description": "Net debt as percentage of tangible net worth",
-        "Data Required": "Total debt, Cash and liquid investments, Tangible net worth"
-    },
-    
-    # Liquidity Metrics
-    {
-        "Category": "Liquidity",
-        "Metric": "Loan-to-Deposit Ratio",
-        "Formula": "(Total Loans / Total Deposits) * 100",
-        "Description": "Measures bank's lending relative to deposit base",
-        "Data Required": "Total loans, Total deposits"
-    },
-    {
-        "Category": "Liquidity",
-        "Metric": "Cash & Liquid Investments",
-        "Formula": "Cash + Short-term Investments + Money Market Instruments",
-        "Description": "Total liquid assets available",
-        "Data Required": "Cash, Short-term investments, Money market instruments"
-    },
-    {
-        "Category": "Liquidity",
-        "Metric": "Liquidity Coverage Ratio",
-        "Formula": "(High Quality Liquid Assets / Net Cash Outflows over 30 days) * 100",
-        "Description": "Ability to meet short-term obligations during stress",
-        "Data Required": "High quality liquid assets, Net cash outflows (30 days)"
-    }
-]
+        <!-- Input Sections -->
+        <div class="input-sections">
+            <!-- Balance Sheet Section -->
+            <section class="card input-section">
+                <h2 class="section-title">Balance Sheet Data</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="total_assets">Total Assets (₹ Cr)</label>
+                        <input type="number" id="total_assets" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="interest_earning_assets">Interest Earning Assets (₹ Cr)</label>
+                        <input type="number" id="interest_earning_assets" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="cash_equivalents">Cash & Cash Equivalents (₹ Cr)</label>
+                        <input type="number" id="cash_equivalents" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="short_term_investments">Short-term Investments (₹ Cr)</label>
+                        <input type="number" id="short_term_investments" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="gross_advances">Gross Advances/Loans (₹ Cr)</label>
+                        <input type="number" id="gross_advances" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="gross_npas">Gross NPAs (₹ Cr)</label>
+                        <input type="number" id="gross_npas" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="provisions_npas">Provisions for NPAs (₹ Cr)</label>
+                        <input type="number" id="provisions_npas" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="total_liabilities">Total Liabilities (₹ Cr)</label>
+                        <input type="number" id="total_liabilities" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="deposits">Total Deposits (₹ Cr)</label>
+                        <input type="number" id="deposits" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="external_debt">External Debt (₹ Cr)</label>
+                        <input type="number" id="external_debt" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="shareholders_equity">Shareholders Equity (₹ Cr)</label>
+                        <input type="number" id="shareholders_equity" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="risk_weighted_assets">Risk Weighted Assets (₹ Cr)</label>
+                        <input type="number" id="risk_weighted_assets" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="tier1_capital">Tier 1 Capital (₹ Cr)</label>
+                        <input type="number" id="tier1_capital" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="tier2_capital">Tier 2 Capital (₹ Cr)</label>
+                        <input type="number" id="tier2_capital" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                </div>
+            </section>
 
-# Create DataFrame
-df_metrics = pd.DataFrame(banking_metrics)
+            <!-- Income Statement Section -->
+            <section class="card input-section">
+                <h2 class="section-title">Income Statement Data</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="interest_income">Interest Income (₹ Cr)</label>
+                        <input type="number" id="interest_income" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="interest_expense">Interest Expense (₹ Cr)</label>
+                        <input type="number" id="interest_expense" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="non_interest_income">Non-Interest Income (₹ Cr)</label>
+                        <input type="number" id="non_interest_income" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="operating_income">Operating Income (₹ Cr)</label>
+                        <input type="number" id="operating_income" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="operating_expenses">Operating Expenses (₹ Cr)</label>
+                        <input type="number" id="operating_expenses" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="provisions_writeoffs">Provisions & Write-offs (₹ Cr)</label>
+                        <input type="number" id="provisions_writeoffs" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="net_income">Net Income/PAT (₹ Cr)</label>
+                        <input type="number" id="net_income" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                </div>
+            </section>
 
-# Display the comprehensive list
-print("=== COMPREHENSIVE BANKING FINANCIAL METRICS ===")
-print(f"\nTotal Metrics: {len(df_metrics)}")
-print(f"Categories: {df_metrics['Category'].unique()}")
+            <!-- Previous Period Data -->
+            <section class="card input-section">
+                <h2 class="section-title">Previous Period Data (for Growth Calculations)</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="prev_aum">Previous AUM (₹ Cr)</label>
+                        <input type="number" id="prev_aum" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="prev_loans">Previous Loans (₹ Cr)</label>
+                        <input type="number" id="prev_loans" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="prev_deposits">Previous Deposits (₹ Cr)</label>
+                        <input type="number" id="prev_deposits" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="prev_operating_income">Previous Operating Income (₹ Cr)</label>
+                        <input type="number" id="prev_operating_income" class="form-control" placeholder="0" step="0.01" oninput="calculateMetrics()">
+                    </div>
+                </div>
+            </section>
+        </div>
 
-# Group by category and display
-for category in df_metrics['Category'].unique():
-    print(f"\n{'='*50}")
-    print(f"CATEGORY: {category.upper()}")
-    print(f"{'='*50}")
-    
-    category_metrics = df_metrics[df_metrics['Category'] == category]
-    for idx, row in category_metrics.iterrows():
-        print(f"\n{row['Metric']}:")
-        print(f"  Formula: {row['Formula']}")
-        print(f"  Description: {row['Description']}")
-        print(f"  Data Required: {row['Data Required']}")
+        <!-- Results Dashboard -->
+        <div class="results-dashboard">
+            <h2>Analysis Results</h2>
+            
+            <!-- Growth Metrics -->
+            <section class="card results-section">
+                <h3 class="results-category-title">Growth Metrics</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card" id="aum_growth">
+                        <div class="metric-name">AUM Growth (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: 15-20%</div>
+                    </div>
+                    <div class="metric-card" id="loan_growth">
+                        <div class="metric-name">Loan Growth (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: 15-25%</div>
+                    </div>
+                    <div class="metric-card" id="deposit_growth">
+                        <div class="metric-name">Deposit Growth (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: 15-20%</div>
+                    </div>
+                    <div class="metric-card" id="op_income_growth">
+                        <div class="metric-name">Operating Income Growth (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: 12-18%</div>
+                    </div>
+                </div>
+            </section>
 
-print(f"\n{'='*70}")
-print("ADDITIONAL SUGGESTED METRICS FOR COMPREHENSIVE ANALYSIS")
-print(f"{'='*70}")
+            <!-- Profitability Metrics -->
+            <section class="card results-section">
+                <h3 class="results-category-title">Profitability Metrics</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card" id="nim">
+                        <div class="metric-name">Net Interest Margin (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: 3.0-4.5%</div>
+                    </div>
+                    <div class="metric-card" id="gross_nim">
+                        <div class="metric-name">Gross NIM (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: 7-10%</div>
+                    </div>
+                    <div class="metric-card" id="roa">
+                        <div class="metric-name">ROA (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: 1.0-2.0%</div>
+                    </div>
+                    <div class="metric-card" id="roe">
+                        <div class="metric-name">ROE (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: 12-18%</div>
+                    </div>
+                    <div class="metric-card" id="ppp_ratio">
+                        <div class="metric-name">PPP % of AR (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: 2.5-4.0%</div>
+                    </div>
+                </div>
+            </section>
 
-additional_metrics = [
-    "Book Value per Share = (Total Equity - Preferred Stock) / Outstanding Shares",
-    "Dividend Payout Ratio = Dividends per Share / Earnings per Share",
-    "Interest Rate Spread = Average Lending Rate - Average Deposit Rate",
-    "Non-Interest Income Ratio = Non-Interest Income / Total Income",
-    "Deposit Mix Ratio = (CASA Deposits / Total Deposits) * 100",
-    "Branch Productivity = Total Business per Branch",
-    "Employee Productivity = Total Business per Employee",
-    "Technology Expenses Ratio = IT Expenses / Total Operating Expenses"
-]
+            <!-- Asset Quality Metrics -->
+            <section class="card results-section">
+                <h3 class="results-category-title">Asset Quality Metrics</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card" id="gross_npa">
+                        <div class="metric-name">Gross NPA (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: <3%</div>
+                    </div>
+                    <div class="metric-card" id="net_npa">
+                        <div class="metric-name">Net NPA (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: <1%</div>
+                    </div>
+                    <div class="metric-card" id="credit_cost">
+                        <div class="metric-name">Credit Cost (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: <1%</div>
+                    </div>
+                    <div class="metric-card" id="provision_coverage">
+                        <div class="metric-name">Provision Coverage (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: >70%</div>
+                    </div>
+                </div>
+            </section>
 
-for i, metric in enumerate(additional_metrics, 1):
-    print(f"{i}. {metric}")
+            <!-- Efficiency Metrics -->
+            <section class="card results-section">
+                <h3 class="results-category-title">Efficiency Metrics</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card" id="efficiency_ratio">
+                        <div class="metric-name">Efficiency Ratio (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: <50%</div>
+                    </div>
+                    <div class="metric-card" id="cost_to_income">
+                        <div class="metric-name">Cost-to-Income (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: 40-60%</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Capital Adequacy Metrics -->
+            <section class="card results-section">
+                <h3 class="results-category-title">Capital Adequacy Metrics</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card" id="car">
+                        <div class="metric-name">CAR (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: >11.5%</div>
+                    </div>
+                    <div class="metric-card" id="external_debt_tnw">
+                        <div class="metric-name">External Debt/TNW (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: <100%</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Liquidity Metrics -->
+            <section class="card results-section">
+                <h3 class="results-category-title">Liquidity Metrics</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card" id="loan_to_deposit">
+                        <div class="metric-name">Loan-to-Deposit (%)</div>
+                        <div class="metric-value">-</div>
+                        <div class="metric-benchmark">Benchmark: 70-80%</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
